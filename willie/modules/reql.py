@@ -39,11 +39,17 @@ def reql(willie, trigger):
     if trigger.group(2) == " " or trigger.group(2) == "" or str(trigger.group(2)) == None or str(trigger.group(2)) == "" or trigger.group(2) == None:
         willie.say("I'm sorry, " + str(trigger.nick) + ", but you must enter a query.")
     else:
-        query = box.call(eval_reql, trigger.group(2))
-        with r.connect() as c:
-            c = r.connect()
-            res = query.run(c)
-            output_results(res, willie)
+        try:
+            query = box.call(eval_reql, trigger.group(2))
+
+            with r.connect() as c:
+                c = r.connect()
+                res = query.run(c)
+                output_results(res, willie)
+        except s.SandboxError:
+            willie.say("Nice try :P")
+        except IOError:
+            willie.say("Nice try :P")
 
 reql.commands = ['reql']
 reql.priority = 'medium'
