@@ -8,13 +8,15 @@ http://willie.dftba.net
 
 import sandbox as s
 import rethinkdb as r
+import inspect
 
-s.proxy.SAFE_TYPES += (type(r.expr(1)),)
+for k,v in inspect.getmembers(r.ast):
+    if type(v) == type(type(1)):
+        s.proxy.SAFE_TYPES += (v,)
 
 cfg = s.SandboxConfig()
 cfg.allowModule("rethinkdb", *dir(r))
 box = s.Sandbox(cfg)
-
 
 def eval_reql(string):
     import rethinkdb as r
@@ -27,7 +29,14 @@ def reql(willie, trigger):
     else:
         query = box.call(eval_reql, trigger.group(2))
         c = r.connect()
-        willie.say(str(query.run(c)))
+        res = query.run(c)
+        if type(res) == r.Cursor:
+            data = []
+            for v, unused in zip(res, xrange(5)):
+                data += [v]
+            willie.say(str(data))
+        else:
+            willie.say(str(res))
         c.close()
 
 reql.commands = ['reql']
