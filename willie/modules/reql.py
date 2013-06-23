@@ -34,17 +34,16 @@ def output_results(res, willie):
     else:
         willie.say(str(res))
 
-
 def reql(willie, trigger):
     """.reql <query> - Executes <query> as a piece of ReQL code (in python)."""
     if trigger.group(2) == " " or trigger.group(2) == "" or str(trigger.group(2)) == None or str(trigger.group(2)) == "" or trigger.group(2) == None:
         willie.say("I'm sorry, " + str(trigger.nick) + ", but you must enter a query.")
     else:
         query = box.call(eval_reql, trigger.group(2))
-        c = r.connect()
-        res = query.run(c)
-        output_results(res, willie)
-        c.close()
+        with r.connect() as c:
+            c = r.connect()
+            res = query.run(c)
+            output_results(res, willie)
 
 reql.commands = ['reql']
 reql.priority = 'medium'
