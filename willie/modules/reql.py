@@ -22,6 +22,19 @@ def eval_reql(string):
     import rethinkdb as r
     return eval(string)
 
+def output_results(res, willie):
+    if type(res) == r.Cursor:
+        data = []
+        for v, unused in zip(res, xrange(6)):
+            data += [v]
+        if len(data) > 5:
+            willie.say(str(data)[:-1] + ",...]")
+        else:
+            willie.say(str(data))
+    else:
+        willie.say(str(res))
+
+
 def reql(willie, trigger):
     """.reql <query> - Executes <query> as a piece of ReQL code (in python)."""
     if trigger.group(2) == " " or trigger.group(2) == "" or str(trigger.group(2)) == None or str(trigger.group(2)) == "" or trigger.group(2) == None:
@@ -30,13 +43,7 @@ def reql(willie, trigger):
         query = box.call(eval_reql, trigger.group(2))
         c = r.connect()
         res = query.run(c)
-        if type(res) == r.Cursor:
-            data = []
-            for v, unused in zip(res, xrange(5)):
-                data += [v]
-            willie.say(str(data))
-        else:
-            willie.say(str(res))
+        output_results(res, willie)
         c.close()
 
 reql.commands = ['reql']
