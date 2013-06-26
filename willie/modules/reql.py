@@ -1,9 +1,6 @@
 """
 reql.py - ReQL Module
-Copyright 2010, Michael Yanovich, yanovich.net
-Licensed under the Eiffel Forum License 2.
-
-http://willie.dftba.net
+Copyright 2013, Joe Doliner, joedoliner.com
 """
 
 import sandbox as s
